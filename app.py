@@ -130,6 +130,31 @@ display_logo(logo_path)
 
 # 起動画面 or メイン画面
 if not st.session_state.get("started"):
+    st.markdown("""
+        <style>
+        .tap-to-start {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            opacity: 0.9;
+        }
+        </style>
+        <div class="tap-to-start">
+            <a href="?start=true">
+                <img src="data:image/png;base64,{}" width="220">
+            </a>
+        </div>
+    """.format(base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()), unsafe_allow_html=True)
+
+    # URLパラメータによるトリガー（start=true で開始）
+    query_params = st.experimental_get_query_params()
+    if query_params.get("start") == ["true"]:
+        st.session_state.started = True
+        st.experimental_rerun()
+
+if not st.session_state.get("started"):
     # オーバーレイ画像の表示（背景を邪魔しない位置）
     st.markdown("""
         <style>
@@ -142,17 +167,9 @@ if not st.session_state.get("started"):
         }
         </style>
         <div class="overlay-container">
-            <img src="https://raw.githubusercontent.com/あなたのユーザー名/EXIGNIS/main/images/tap_to_start_overlay.png" width="300">
+            <img src="https://raw.githubusercontent.com/takamasakimura/EXIGNIS/main/images/tap_to_start_overlay.png" width="300">
         </div>
     """, unsafe_allow_html=True)
-
-    if st.button("▶️ START"):
-        st.session_state.started = True
-        st.experimental_rerun()
-
-    if st.button("▶️ はじめる"):
-        st.session_state.started = True
-        st.experimental_rerun()
 
 if st.session_state.get("started"):
     show_skills_page()  # skillsページを表示

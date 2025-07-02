@@ -1,21 +1,24 @@
 import streamlit as st
 from PIL import Image
 import base64
-from utils import initialize_session, load_data
 import io
 import os
+
+from utils import initialize_session, load_data
 from pages.skills import show_skills_page
 from pages.status import show_status_page
 from pages.library import show_library_page
 from pages.report import show_report_page
 
+# ページ設定（最上部）
+st.set_page_config(layout="wide")
+
+# サイドバー完全非表示
 st.markdown("""
     <style>
-    /* サイドバー全体を非表示にする */
     section[data-testid="stSidebar"] {
         display: none !important;
     }
-    /* メインコンテンツを全幅に拡張する */
     div[data-testid="stSidebarContent"] {
         display: none !important;
     }
@@ -26,47 +29,32 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ページ設定（最上部に置く）
-st.set_page_config(layout="wide")
-
 # セッション＆データ
 initialize_session()
 load_data()
 
-# 安全なパス取得方法
+# パス構成
 current_dir = os.path.dirname(os.path.abspath(__file__))
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
-start_banner_path = os.path.join(current_dir, "gif_assets", "start_banner.gif")
 
-# 背景GIF表示用関数
+# 背景GIF適用
 def apply_background_gif(file_path):
     with open(file_path, "rb") as f:
-        data = f.read()
-        encoded = base64.b64encode(data).decode()
-        st.markdown(
-            f"""
-            <style>
-            .stApp {{
-                background: url("data:image/gif;base64,{encoded}") no-repeat center center fixed;
-                background-size: cover;
-            }}
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
+        encoded = base64.b64encode(f.read()).decode()
+    st.markdown(
+        f"""
+        <style>
+        .stApp {{
+            background: url("data:image/gif;base64,{encoded}") no-repeat center center fixed;
+            background-size: cover;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-# 開始バナー表示用関数
-def display_base64_gif(file_path, width=600):
-    with open(file_path, "rb") as f:
-        data = f.read()
-        encoded = base64.b64encode(data).decode()
-        st.markdown(
-            f'<div style="text-align:center;"><img src="data:image/gif;base64,{encoded}" width="{width}"/></div>',
-            unsafe_allow_html=True,
-        )
-
-# ロゴ表示用関数
+# ロゴ表示
 def display_logo(path: str, width: int = 320):
     logo = Image.open(path)
     buffered = io.BytesIO()
@@ -90,11 +78,7 @@ def display_logo(path: str, width: int = 320):
         unsafe_allow_html=True
     )
 
-# 背景とロゴの表示（ここから）
-apply_background_gif(background_path)
-display_logo(logo_path)
-
-# ペルソナ風CSS適用
+# ペルソナ風CSS
 st.markdown("""
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
@@ -140,9 +124,13 @@ div.stButton > button:hover {
     </style>
 """, unsafe_allow_html=True)
 
+# 背景とロゴの表示
+apply_background_gif(background_path)
+display_logo(logo_path)
+
 # 起動画面 or メイン画面
 if not st.session_state.get("started"):
-    # 「tap to start」表示（背景との融合版）
+    # 「tap to start」表示（発光テキスト）
     st.markdown("""
         <style>
         .start-text {
@@ -182,26 +170,19 @@ if not st.session_state.get("started"):
         </style>
         <div class="start-text">tap to start</div>
     """, unsafe_allow_html=True)
-    
-   # ボタン表示
+
     if st.button("▶️ はじめる"):
         st.session_state.started = True
         st.experimental_rerun()
+
 else:
-    st.markdown("<h1>🕶 ステータス育成アプリ</h1>", unsafe_allow_html=True)
-    st.markdown("## ✨ 今日も、自分を育てる1日を。")
-    st.markdown("---")
-    st.info("📘 サイドバーから [行動入力] へどうぞ。")
+    tab = st.selectbox("", ["SKILLS", "STATUS", "LIBRARY", "REPORT"], index=0, label_visibility="collapsed")
 
-tab = st.radio("ページを選択", ["SKILLS", "STATUS", "LIBRARY", "REPORT"], horizontal=True)
-
-if tab == "SKILLS":
-    show_skills_page()
-elif tab == "STATUS":
-    show_status_page()
-elif tab == "LIBRARY":
-    show_library_page()
-elif tab == "REPORT":
-    show_report_page()
-
-
+    if tab == "SKILLS":
+        show_skills_page()
+    elif tab == "STATUS":
+        show_status_page()
+    elif tab == "LIBRARY":
+        show_library_page()
+    elif tab == "REPORT":
+        show_report_page()

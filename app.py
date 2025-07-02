@@ -60,23 +60,23 @@ def display_logo(path: str, width: int = 320):
     buffered = io.BytesIO()
     logo.save(buffered, format="PNG")
     logo_base64 = base64.b64encode(buffered.getvalue()).decode()
-    st.markdown(
-        f"""
-        <style>
-        .logo-container {{
-            position: absolute;
-            top: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-        }}
-        </style>
-        <div class="logo-container">
-            <img src="data:image/png;base64,{logo_base64}" width="{width}">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+st.markdown("""
+    <style>
+    .tap-to-start {{
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        opacity: 0.9;
+    }}
+    </style>
+    <div class="tap-to-start">
+        <a href="?start=true">
+            <img src="data:image/png;base64,{}" width="220">
+        </a>
+    </div>
+""".format(base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()), unsafe_allow_html=True)
 
 # ペルソナ風CSS
 st.markdown("""
@@ -129,7 +129,9 @@ apply_background_gif(background_path)
 display_logo(logo_path)
 
 if not st.session_state.get("started"):
-    st.markdown("""
+    tap_image = base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()
+
+    st.markdown(f"""
         <style>
         .tap-to-start {{
             position: absolute;
@@ -142,14 +144,12 @@ if not st.session_state.get("started"):
         </style>
         <div class="tap-to-start">
             <a href="?start=true">
-                <img src="data:image/png;base64,{}" width="220">
+                <img src="data:image/png;base64,{tap_image}" width="220">
             </a>
         </div>
-    """.format(base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-    # URLパラメータによるトリガー（start=true で開始）
-    query_params = st.experimental_get_query_params()
-    if query_params.get("start") == ["true"]:
+    if st.query_params.get("start") == ["true"]:
         st.session_state.started = True
         st.experimental_rerun()
 

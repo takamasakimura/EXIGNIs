@@ -5,19 +5,18 @@ from utils import initialize_session, load_data
 import io
 import os
 
+# ページ設定（最上部に置く）
+st.set_page_config(layout="wide")
+
+# セッション＆データ
+initialize_session()
+load_data()
+
 # 安全なパス取得方法
 current_dir = os.path.dirname(os.path.abspath(__file__))
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 start_banner_path = os.path.join(current_dir, "gif_assets", "start_banner.gif")
-
-apply_background_gif(background_path)
-display_logo(logo_path)
-display_base64_gif(start_banner_path)
-
-st.set_page_config(layout="wide")
-initialize_session()
-load_data()
 
 # 背景GIF表示用関数
 def apply_background_gif(file_path):
@@ -70,13 +69,11 @@ def display_logo(path: str, width: int = 320):
         unsafe_allow_html=True
     )
 
-# 背景適用
-apply_background_gif("gif_assets/abyss_background.gif")
+# 背景とロゴの表示（ここから）
+apply_background_gif(background_path)
+display_logo(logo_path)
 
-# ロゴ表示
-display_logo("images/abysslog_logo_transparent.png")
-
-# CSS適用
+# ペルソナ風CSS適用
 st.markdown("""
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
@@ -124,7 +121,7 @@ div.stButton > button:hover {
 
 # 起動画面 or メイン画面
 if not st.session_state.get("started"):
-    display_base64_gif("gif_assets/start_banner.gif", width=600)
+    display_base64_gif(start_banner_path)
     st.markdown('<div style="text-align:center;font-size:28px;color:white;text-shadow:2px 2px black;">- tap to start -</div>', unsafe_allow_html=True)
     
     if st.button("▶️ はじめる"):

@@ -128,18 +128,17 @@ div.stButton > button:hover {
 apply_background_gif(background_path)
 display_logo(logo_path)
 
-# 起動画面 or メイン画面
 if not st.session_state.get("started"):
     st.markdown("""
         <style>
-        .tap-to-start {
+        .tap-to-start {{
             position: absolute;
             bottom: 5%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
             opacity: 0.9;
-        }
+        }}
         </style>
         <div class="tap-to-start">
             <a href="?start=true">

@@ -1,5 +1,11 @@
 import streamlit as st
 from utils import SKILL_DICT, initialize_session
+def show_library_page():
+    st.markdown("### 🔧 行動入力（Skills）")
+    st.markdown("ここに行動入力フォームやスキル選択UIを実装します。")
+    # 例: スキルの選択肢や入力欄など
+    if st.button("ダミーボタン"):
+        st.success("ダミー操作が実行されました！")
 
 st.set_page_config(page_title="スキル辞典と称号", layout="wide")
 initialize_session()

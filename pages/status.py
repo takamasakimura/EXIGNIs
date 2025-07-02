@@ -1,5 +1,11 @@
 import streamlit as st
 from utils import initialize_session
+def show_status_page():
+    st.markdown("### 🔧 行動入力（Skills）")
+    st.markdown("ここに行動入力フォームやスキル選択UIを実装します。")
+    # 例: スキルの選択肢や入力欄など
+    if st.button("ダミーボタン"):
+        st.success("ダミー操作が実行されました！")
 
 st.set_page_config(page_title="ステータス画面", layout="centered")
 initialize_session()

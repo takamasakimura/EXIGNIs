@@ -4,6 +4,27 @@ import base64
 from utils import initialize_session, load_data
 import io
 import os
+from pages.skills import show_skills_page
+from pages.status import show_status_page
+from pages.library import show_library_page
+from pages.report import show_report_page
+
+st.markdown("""
+    <style>
+    /* サイドバー全体を非表示にする */
+    section[data-testid="stSidebar"] {
+        display: none !important;
+    }
+    /* メインコンテンツを全幅に拡張する */
+    div[data-testid="stSidebarContent"] {
+        display: none !important;
+    }
+    .main .block-container {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 # ページ設定（最上部に置く）
 st.set_page_config(layout="wide")
@@ -121,9 +142,48 @@ div.stButton > button:hover {
 
 # 起動画面 or メイン画面
 if not st.session_state.get("started"):
-    display_base64_gif(start_banner_path)
-    st.markdown('<div style="text-align:center;font-size:28px;color:white;text-shadow:2px 2px black;">- tap to start -</div>', unsafe_allow_html=True)
+    # 「tap to start」表示（背景との融合版）
+    st.markdown("""
+        <style>
+        .start-text {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 28px;
+            font-weight: 600;
+            font-family: 'Jost', 'BIZ UDPGothic', sans-serif;
+            text-shadow:
+                0 0 4px rgba(255, 255, 255, 0.4),
+                0 0 8px rgba(0, 255, 255, 0.3),
+                0 0 12px rgba(0, 255, 255, 0.2);
+            opacity: 0.85;
+            animation: glowFade 3s ease-in-out infinite;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        @keyframes glowFade {
+            0%, 100% {
+                opacity: 0.85;
+                text-shadow:
+                    0 0 4px rgba(255, 255, 255, 0.4),
+                    0 0 8px rgba(0, 255, 255, 0.3),
+                    0 0 12px rgba(0, 255, 255, 0.2);
+            }
+            50% {
+                opacity: 0.4;
+                text-shadow:
+                    0 0 2px rgba(255, 255, 255, 0.2),
+                    0 0 4px rgba(0, 255, 255, 0.15),
+                    0 0 6px rgba(0, 255, 255, 0.1);
+            }
+        }
+        </style>
+        <div class="start-text">tap to start</div>
+    """, unsafe_allow_html=True)
     
+   # ボタン表示
     if st.button("▶️ はじめる"):
         st.session_state.started = True
         st.experimental_rerun()
@@ -132,3 +192,16 @@ else:
     st.markdown("## ✨ 今日も、自分を育てる1日を。")
     st.markdown("---")
     st.info("📘 サイドバーから [行動入力] へどうぞ。")
+
+tab = st.radio("ページを選択", ["SKILLS", "STATUS", "LIBRARY", "REPORT"], horizontal=True)
+
+if tab == "SKILLS":
+    show_skills_page()
+elif tab == "STATUS":
+    show_status_page()
+elif tab == "LIBRARY":
+    show_library_page()
+elif tab == "REPORT":
+    show_report_page()
+
+

@@ -128,9 +128,24 @@ div.stButton > button:hover {
 apply_background_gif(background_path)
 display_logo(logo_path)
 
+# 起動画面（未開始時）
 if not st.session_state.get("started"):
-    tap_image = base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()
+    # ロゴ（左上）
+    st.markdown(f"""
+        <style>
+        .logo-top-left {{
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            z-index: 9999;
+        }}
+        </style>
+        <div class="logo-top-left">
+            <img src="data:image/png;base64,{base64.b64encode(open('images/abysslog_logo_transparent.png', 'rb').read()).decode()}" width="180">
+        </div>
+    """, unsafe_allow_html=True)
 
+    # tap_to_start_clean.png（下部中央）
     st.markdown(f"""
         <style>
         .tap-to-start {{
@@ -139,36 +154,19 @@ if not st.session_state.get("started"):
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
-            opacity: 0.9;
         }}
         </style>
         <div class="tap-to-start">
             <a href="?start=true">
-                <img src="data:image/png;base64,{tap_image}" width="220">
+                <img src="data:image/png;base64,{encoded}" width="200">
             </a>
         </div>
     """, unsafe_allow_html=True)
 
+    # URLパラメータによる遷移処理
     if st.query_params.get("start") == ["true"]:
         st.session_state.started = True
         st.experimental_rerun()
-
-if not st.session_state.get("started"):
-    # オーバーレイ画像の表示（背景を邪魔しない位置）
-    st.markdown("""
-        <style>
-        .overlay-container {
-            position: absolute;
-            bottom: 6%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-        }
-        </style>
-        <div class="overlay-container">
-            <img src="https://raw.githubusercontent.com/takamasakimura/EXIGNIS/main/images/tap_to_start_overlay.png" width="300">
-        </div>
-    """, unsafe_allow_html=True)
 
 if st.session_state.get("started"):
     show_skills_page()  # skillsページを表示

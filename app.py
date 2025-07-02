@@ -130,50 +130,32 @@ display_logo(logo_path)
 
 # 起動画面 or メイン画面
 if not st.session_state.get("started"):
-    # 「tap to start」表示（発光テキスト）
+    # オーバーレイ画像の表示（背景を邪魔しない位置）
     st.markdown("""
         <style>
-        .start-text {
+        .overlay-container {
             position: absolute;
-            bottom: 15%;
+            bottom: 6%;
             left: 50%;
             transform: translateX(-50%);
-            color: white;
-            font-size: 28px;
-            font-weight: 600;
-            font-family: 'Jost', 'BIZ UDPGothic', sans-serif;
-            text-shadow:
-                0 0 4px rgba(255, 255, 255, 0.4),
-                0 0 8px rgba(0, 255, 255, 0.3),
-                0 0 12px rgba(0, 255, 255, 0.2);
-            opacity: 0.85;
-            animation: glowFade 3s ease-in-out infinite;
             z-index: 9999;
-            pointer-events: none;
-        }
-        @keyframes glowFade {
-            0%, 100% {
-                opacity: 0.85;
-                text-shadow:
-                    0 0 4px rgba(255, 255, 255, 0.4),
-                    0 0 8px rgba(0, 255, 255, 0.3),
-                    0 0 12px rgba(0, 255, 255, 0.2);
-            }
-            50% {
-                opacity: 0.4;
-                text-shadow:
-                    0 0 2px rgba(255, 255, 255, 0.2),
-                    0 0 4px rgba(0, 255, 255, 0.15),
-                    0 0 6px rgba(0, 255, 255, 0.1);
-            }
         }
         </style>
-        <div class="start-text">tap to start</div>
+        <div class="overlay-container">
+            <img src="https://raw.githubusercontent.com/あなたのユーザー名/EXIGNIS/main/images/tap_to_start_overlay.png" width="300">
+        </div>
     """, unsafe_allow_html=True)
+
+    if st.button("▶️ START"):
+        st.session_state.started = True
+        st.experimental_rerun()
 
     if st.button("▶️ はじめる"):
         st.session_state.started = True
         st.experimental_rerun()
+
+if st.session_state.get("started"):
+    show_skills_page()  # skillsページを表示
 
 else:
     tab = st.selectbox("", ["SKILLS", "STATUS", "LIBRARY", "REPORT"], index=0, label_visibility="collapsed")

@@ -128,9 +128,13 @@ div.stButton > button:hover {
 apply_background_gif(background_path)
 display_logo(logo_path)
 
-# 起動画面（未開始時）
+# tap_to_start_clean.png 用エンコード
+tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
+with open(tap_path, "rb") as f:
+    tap_encoded = base64.b64encode(f.read()).decode()
+
+# 起動画面
 if not st.session_state.get("started"):
-    # ロゴ（左上）
     st.markdown(f"""
         <style>
         .logo-top-left {{
@@ -139,15 +143,6 @@ if not st.session_state.get("started"):
             left: 30px;
             z-index: 9999;
         }}
-        </style>
-        <div class="logo-top-left">
-            <img src="data:image/png;base64,{base64.b64encode(open('images/abysslog_logo_transparent.png', 'rb').read()).decode()}" width="180">
-        </div>
-    """, unsafe_allow_html=True)
-
-    # tap_to_start_clean.png（下部中央）
-    st.markdown(f"""
-        <style>
         .tap-to-start {{
             position: absolute;
             bottom: 5%;
@@ -156,14 +151,17 @@ if not st.session_state.get("started"):
             z-index: 9999;
         }}
         </style>
+        <div class="logo-top-left">
+            <img src="data:image/png;base64,{base64.b64encode(open(logo_path, 'rb').read()).decode()}" width="180">
+        </div>
         <div class="tap-to-start">
             <a href="?start=true">
-                <img src="data:image/png;base64,{encoded}" width="200">
+                <img src="data:image/png;base64,{tap_encoded}" width="200">
             </a>
         </div>
     """, unsafe_allow_html=True)
 
-    # URLパラメータによる遷移処理
+    # 遷移トリガー
     if st.query_params.get("start") == ["true"]:
         st.session_state.started = True
         st.experimental_rerun()

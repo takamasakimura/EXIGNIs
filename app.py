@@ -10,8 +10,6 @@ from pages.status import show_status_page
 from pages.library import show_library_page
 from pages.report import show_report_page
 
-<img src="data:image/png;base64,{base64}" style="background-color: transparent;" />
-
 # ページ設定（最上部）
 st.set_page_config(layout="wide")
 
@@ -62,16 +60,11 @@ def display_logo(path: str, width: int = 320):
     buffered = io.BytesIO()
     logo.save(buffered, format="PNG")
     logo_base64 = base64.b64encode(buffered.getvalue()).decode()
-st.markdown("""
-    <style>
-    .tap-to-start {{
-        position: absolute;
-        bottom: 5%;
-        left: 50%;
-        transform: translateX(-50%);
-        z-index: 9999;
-        opacity: 0.9;
-    }}
+    st.markdown(
+    f"""
+        <div style='position: absolute; top: 10px; left: 10px; z-index: 9999;'>
+            <img src="data:image/png;base64,{logo_base64}" width="{width}">
+        </div>
     </style>
     <div class="tap-to-start">
         <a href="?start=true">
@@ -150,10 +143,10 @@ if not st.session_state.get("started"):
         <style>
         .logo-top-left {{
             position: absolute;
-            top: 0x;
+            top: 0px;
             left: 0px;
             z-index: 9999;
-	    padding;10px;
+	    padding:10px;
         }}
         .tap-to-start {{
             position: absolute;
@@ -196,12 +189,3 @@ if not st.session_state.get("started"):
 else:
     # 本編（skillsページ）へ
     show_skills_page()
-
-    if tab == "SKILLS":
-        show_skills_page()
-    elif tab == "STATUS":
-        show_status_page()
-    elif tab == "LIBRARY":
-        show_library_page()
-    elif tab == "REPORT":
-        show_report_page()

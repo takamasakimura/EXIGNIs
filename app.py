@@ -10,6 +10,8 @@ from pages.status import show_status_page
 from pages.library import show_library_page
 from pages.report import show_report_page
 
+<img src="data:image/png;base64,{base64}" style="background-color: transparent;" />
+
 # ページ設定（最上部）
 st.set_page_config(layout="wide")
 
@@ -139,9 +141,10 @@ if not st.session_state.get("started"):
         <style>
         .logo-top-left {{
             position: absolute;
-            top: 30px;
-            left: 30px;
+            top: 0x;
+            left: 0px;
             z-index: 9999;
+	    padding;10px;
         }}
         .tap-to-start {{
             position: absolute;
@@ -149,6 +152,14 @@ if not st.session_state.get("started"):
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
+        }}
+        .transparent-button {{
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 10000;
         }}
         </style>
         <div class="logo-top-left">
@@ -159,6 +170,12 @@ if not st.session_state.get("started"):
                 <img src="data:image/png;base64,{tap_encoded}" width="200">
             </a>
         </div>
+        <div class="transparent-button">
+            <a href="?start=true">
+                <img src="data:image/png;base64,{}" width="100%" height="100%" style="opacity:0;" />
+            </a>
+        </div>
+""".format(base64.b64encode(open("images/transparent_click_area.png", "rb").read()).decode()), 
     """, unsafe_allow_html=True)
 
     # 遷移トリガー
@@ -166,7 +183,8 @@ if not st.session_state.get("started"):
         st.session_state.started = True
         st.experimental_rerun()
 
-elif st.session_state.get("started"):
+else:
+    # 本編（skillsページ）へ
     show_skills_page()
 
     if tab == "SKILLS":

@@ -166,11 +166,8 @@ if not st.session_state.get("started"):
         st.session_state.started = True
         st.experimental_rerun()
 
-if st.session_state.get("started"):
-    show_skills_page()  # skillsページを表示
-
-else:
-    tab = st.selectbox("", ["SKILLS", "STATUS", "LIBRARY", "REPORT"], index=0, label_visibility="collapsed")
+elif st.session_state.get("started"):
+    show_skills_page()
 
     if tab == "SKILLS":
         show_skills_page()

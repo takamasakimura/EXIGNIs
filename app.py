@@ -143,7 +143,7 @@ if not st.session_state.get("started"):
     st.markdown(f"""
         <style>
         .tap-to-start {{
-            position: absolute;
+            position: fixes;
             bottom: 5%;
             left: 50%;
             transform: translateX(-50%);

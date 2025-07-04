@@ -54,24 +54,29 @@ def apply_background_gif(file_path):
         unsafe_allow_html=True
     )
 
-# ロゴ表示
+# ロゴ表示（左上に固定）
 def display_logo(path: str, width: int = 320):
     logo = Image.open(path)
     buffered = io.BytesIO()
     logo.save(buffered, format="PNG")
     logo_base64 = base64.b64encode(buffered.getvalue()).decode()
     st.markdown(
-    f"""
-        <div style='position: absolute; top: 10px; left: 10px; z-index: 9999;'>
+        f"""
+        <style>
+        .logo-top-left {{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 9999;
+            padding:10px;
+        }}
+        </style>
+        <div class="logo-top-left">
             <img src="data:image/png;base64,{logo_base64}" width="{width}">
         </div>
-    </style>
-    <div class="tap-to-start">
-        <a href="?start=true">
-            <img src="data:image/png;base64,{}" width="220">
-        </a>
-    </div>
-""".format(base64.b64encode(open("images/tap_to_start_clean.png", "rb").read()).decode()), unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 # ペルソナ風CSS
 st.markdown("""
@@ -128,26 +133,15 @@ tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 with open(tap_path, "rb") as f:
     tap_encoded = base64.b64encode(f.read()).decode()
 
-# 起動画面
+# 起動画面（起動前）
 if not st.session_state.get("started"):
-    with open(logo_path, "rb") as f:
-        logo_encoded = base64.b64encode(f.read()).decode()
-
     with open("images/tap_to_start_clean.png", "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
-
     with open("images/transparent_click_area.png", "rb") as f:
         transparent_encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(f"""
         <style>
-        .logo-top-left {{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 9999;
-	    padding:10px;
-        }}
         .tap-to-start {{
             position: absolute;
             bottom: 5%;
@@ -164,11 +158,6 @@ if not st.session_state.get("started"):
             z-index: 10000;
         }}
         </style>
-
-        <div class="logo-top-left">
-            <img src="data:image/png;base64,{logo_encoded}" width="180">
-        </div>
-
         <div class="tap-to-start">
             <a href="?start=true">
                 <img src="data:image/png;base64,{tap_encoded}" width="200">
@@ -179,7 +168,7 @@ if not st.session_state.get("started"):
                 <img src="data:image/png;base64,{transparent_encoded}" width="100%" height="100%" style="opacity:0;" />
             </a>
         </div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
     # 遷移トリガー
     if st.query_params.get("start") == ["true"]:

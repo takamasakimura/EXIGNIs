@@ -144,54 +144,50 @@ tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 with open(tap_path, "rb") as f:
     tap_encoded = base64.b64encode(f.read()).decode()
 
-上記のコート入れ替えに削除するのはこれで間違いないですか？# 起動画面（起動前）
+# 起動画面（起動前）
 if not st.session_state.get("started"):
-    transparent_path = os.path.join(current_dir, "images",         "transparent_click_area.png")
-    with open(transparent_path, "rb") as f:
-        transparent_encoded = base64.b64encode(f.read()).decode()
+    # ボタン画像の読み込み（表示用）
+    tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
+    with open(tap_path, "rb") as f:
+        tap_encoded = base64.b64encode(f.read()).decode()
 
-    st.markdown(f"""
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    # 画像を中央に表示し、その下に透明ボタンを重ねる
+    st.markdown(
+        f"""
         <style>
-        .tap-to-start {{
-            position: fixed;
-            bottom: 5%;
+        .center-image {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100vh;
+        }}
+        .center-image img {{
+            width: 200px;
+            max-width: 80vw;
+        }}
+        .invisible-button {{
+            position: absolute;
+            bottom: 20%;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9999;
-            max-width: 90vw;
-        }}
-        .transparent-button {{
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100vw;
-            height: 50vh;
+            width: 200px;
+            height: 80px;
             z-index: 10000;
-        }}
-        img {{
-            max-width: 100%;
-            height: auto;
+            opacity: 0;
         }}
         </style>
 
-        <div class="tap-to-start">
-            <a href="?start=true">
-                <img src="data:image/png;base64,{tap_encoded}" width="200">
-            </a>
+        <div class="center-image">
+            <img src="data:image/png;base64,{tap_encoded}" />
         </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        <div class="transparent-button">
-            <a href="?start=true">
-                <img src="data:image/png;base64,{transparent_encoded}" width="100%" height="100%" style="opacity:0;" />
-            </a>
-        </div>
-    """, unsafe_allow_html=True)
-
-# セッション開始チェック
-if not st.session_state.get("started"):
-    # tap-to-startをクリックしたか？
-    if st.query_params.get("start") == ["true"]:
+    # 完全透明の Streamlit ボタン（画像の下にある）
+    btn_clicked = st.button("Tap to Start", key="start_button")
+    if btn_clicked:
         st.session_state.started = True
         st.experimental_rerun()
 

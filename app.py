@@ -159,26 +159,23 @@ with open(tap_path, "rb") as f:
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
+    # ボタン画像の読み込み（表示用）
     tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
+    # 背景中央にボタン画像＋透明ボタン
     st.markdown(
         f"""
         <style>
-        .tap-container {{
-            position: relative;
-            height: 100vh;
+        .center-image {{
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            height: 100vh;
         }}
-        .tap-button {{
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }}
-        .tap-button img {{
+        .center-image img {{
             width: 200px;
             max-width: 80vw;
             animation: blink 1.5s infinite;
@@ -189,30 +186,16 @@ if not st.session_state.get("started"):
             100% {{ opacity: 1; }}
         }}
         </style>
-
-        <div class="tap-container">
-            <form action="" method="post">
-                <button class="tap-button" name="start" type="submit">
-                    <img src="data:image/png;base64,{tap_encoded}" alt="Tap to Start" />
-                </button>
-            </form>
+        <div class="center-image">
+            <img src="data:image/png;base64,{tap_encoded}" />
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # POST受信（疑似ボタン押下）
-    if st.session_state.get("start") or st.experimental_get_query_params().get("start"):
+    if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
-        st.experimental_rerun()
+        st.rerun()
 
-    # フォーム用の疑似受信
-    if st.session_state.get("started") is not True and "start" in st.session_state:
-        st.session_state.started = True
-        st.experimental_rerun()
-
-    # 起動画面を表示（↑に先ほどのCSSとHTMLを挿入）
-    st.markdown(...)
 else:
-    # 擬似遷移後のメインページ（skills.py）
     show_skills_page()

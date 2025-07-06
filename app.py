@@ -60,6 +60,7 @@ def display_logo(path: str, width: int = 320):
     buffered = io.BytesIO()
     logo.save(buffered, format="PNG")
     logo_base64 = base64.b64encode(buffered.getvalue()).decode()
+
     st.markdown(
         f"""
         <style>
@@ -68,11 +69,23 @@ def display_logo(path: str, width: int = 320):
             top: 0px;
             left: 0px;
             z-index: 9999;
-            padding:10px;
+            padding: 10px;
+        }}
+        .logo-top-left img {{
+            width: {width}px;
+            max-width: 40vw;
+            height: auto;
+        }}
+
+        @media (max-width: 768px) {{
+            .logo-top-left img {{
+                width: 120px !important;
+                max-width: 30vw !important;
+            }}
         }}
         </style>
         <div class="logo-top-left">
-            <img src="data:image/png;base64,{logo_base64}" width="{width}">
+            <img src="data:image/png;base64,{logo_base64}" alt="logo">
         </div>
         """,
         unsafe_allow_html=True
@@ -146,48 +159,55 @@ with open(tap_path, "rb") as f:
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
-    # ボタン画像の読み込み（表示用）
     tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
-    # 画像を中央に表示し、その下に透明ボタンを重ねる
     st.markdown(
         f"""
         <style>
-        .center-image {{
+        .tap-container {{
+            position: relative;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-            height: 100vh;
         }}
-        .center-image img {{
+        .tap-button {{
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }}
+        .tap-button img {{
             width: 200px;
             max-width: 80vw;
+            animation: blink 1.5s infinite;
         }}
-        .invisible-button {{
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 200px;
-            height: 80px;
-            z-index: 10000;
-            opacity: 0;
+        @keyframes blink {{
+            0% {{ opacity: 1; }}
+            50% {{ opacity: 0.4; }}
+            100% {{ opacity: 1; }}
         }}
         </style>
 
-        <div class="center-image">
-            <img src="data:image/png;base64,{tap_encoded}" />
+        <div class="tap-container">
+            <form action="" method="post">
+                <button class="tap-button" name="start" type="submit">
+                    <img src="data:image/png;base64,{tap_encoded}" alt="Tap to Start" />
+                </button>
+            </form>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    # 完全透明の Streamlit ボタン（画像の下にある）
-    btn_clicked = st.button("Tap to Start", key="start_button")
-    if btn_clicked:
+    # POST受信（疑似ボタン押下）
+    if st.session_state.get("start") or st.experimental_get_query_params().get("start"):
+        st.session_state.started = True
+        st.experimental_rerun()
+
+    # フォーム用の疑似受信
+    if st.session_state.get("started") is not True and "start" in st.session_state:
         st.session_state.started = True
         st.experimental_rerun()
 

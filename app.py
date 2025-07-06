@@ -135,9 +135,9 @@ with open(tap_path, "rb") as f:
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
-transparent_path = os.path.join(current_dir, "images", "transparent_click_area.png")
-with open(transparent_path, "rb") as f:
-    transparent_encoded = base64.b64encode(f.read()).decode()
+    transparent_path = os.path.join(current_dir, "images",         "transparent_click_area.png")
+    with open(transparent_path, "rb") as f:
+        transparent_encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(f"""
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

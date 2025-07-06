@@ -135,34 +135,41 @@ with open(tap_path, "rb") as f:
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
-    with open("images/tap_to_start_clean.png", "rb") as f:
-        tap_encoded = base64.b64encode(f.read()).decode()
-    with open("images/transparent_click_area.png", "rb") as f:
-        transparent_encoded = base64.b64encode(f.read()).decode()
+transparent_path = os.path.join(current_dir, "images", "transparent_click_area.png")
+with open(transparent_path, "rb") as f:
+    transparent_encoded = base64.b64encode(f.read()).decode()
 
     st.markdown(f"""
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
         .tap-to-start {{
-            position: fixes;
+            position: fixed;
             bottom: 5%;
             left: 50%;
             transform: translateX(-50%);
             z-index: 9999;
+            max-width: 90vw;
         }}
         .transparent-button {{
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
-            width: 100%;
-            height: 50%;
+            width: 100vw;
+            height: 50vh;
             z-index: 10000;
         }}
+        img {{
+            max-width: 100%;
+            height: auto;
+        }}
         </style>
+
         <div class="tap-to-start">
             <a href="?start=true">
                 <img src="data:image/png;base64,{tap_encoded}" width="200">
             </a>
         </div>
+
         <div class="transparent-button">
             <a href="?start=true">
                 <img src="data:image/png;base64,{transparent_encoded}" width="100%" height="100%" style="opacity:0;" />
@@ -170,11 +177,15 @@ if not st.session_state.get("started"):
         </div>
     """, unsafe_allow_html=True)
 
-    # 遷移トリガー
+# セッション開始チェック
+if not st.session_state.get("started"):
+    # tap-to-startをクリックしたか？
     if st.query_params.get("start") == ["true"]:
         st.session_state.started = True
         st.experimental_rerun()
 
+    # 起動画面を表示（↑に先ほどのCSSとHTMLを挿入）
+    st.markdown(...)
 else:
-    # 本編（skillsページ）へ
+    # 擬似遷移後のメインページ（skills.py）
     show_skills_page()

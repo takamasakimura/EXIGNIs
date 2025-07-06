@@ -82,32 +82,42 @@ def display_logo(path: str, width: int = 320):
 st.markdown("""
     <style>
 @import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
+
+.main, .block-container {
+    background-color: rgba(0, 0, 0, 0) !important;
+    box-shadow: none !important;
+    padding: 2rem 2rem;
+    border-radius: 12px;
+}
+
+header, footer {
+    visibility: hidden;
+}
+
 body {
     background-color: #0d0d0d;
     color: white;
     font-family: 'Jost', 'BIZ UDPGothic', sans-serif;
 }
+
 h1, h2, h3, h4 {
     color: #ff0033;
     text-shadow: 2px 2px black;
     font-weight: bold;
 }
-.block-container {
-    padding: 2rem 2rem;
-    background: linear-gradient(45deg, #0a0a0a, #1a1a1a);
-    border-radius: 12px;
-    box-shadow: 0 0 10px #ff0033;
-}
+
 .glow {
     color: deepskyblue;
     font-weight: bold;
     animation: glowPulse 1.5s infinite;
 }
+
 @keyframes glowPulse {
     0% { text-shadow: 0 0 5px #00ffff; }
     50% { text-shadow: 0 0 15px #00ffff; }
     100% { text-shadow: 0 0 5px #00ffff; }
 }
+
 div.stButton > button {
     background-color: #ff0033;
     color: white;
@@ -117,6 +127,7 @@ div.stButton > button {
     border-radius: 8px;
     box-shadow: 0 0 5px #ff0033;
 }
+
 div.stButton > button:hover {
     background-color: #cc0000;
     box-shadow: 0 0 10px #ff0033;
@@ -133,7 +144,7 @@ tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 with open(tap_path, "rb") as f:
     tap_encoded = base64.b64encode(f.read()).decode()
 
-# 起動画面（起動前）
+上記のコート入れ替えに削除するのはこれで間違いないですか？# 起動画面（起動前）
 if not st.session_state.get("started"):
     transparent_path = os.path.join(current_dir, "images",         "transparent_click_area.png")
     with open(transparent_path, "rb") as f:

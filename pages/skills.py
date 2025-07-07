@@ -29,6 +29,7 @@ def apply_background(file_path):
         unsafe_allow_html=True
     )
 
+st.session_state["page"] = "skills"
 
 def show_skills_page():
     st.set_page_config(page_title="スキル入力", layout="centered")

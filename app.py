@@ -77,12 +77,17 @@ def display_logo(path: str, width: int = 320):
             height: auto;
         }}
 
-        @media (max-width: 768px) {{
-            .logo-top-left img {{
+        @media (max-width: 768px) {
+            .logo-top-left {
+                top: 0px;  /* スマホ表示時だけ少し下げる */
+                left: 0px;  /* 必要なら横方向も */
+                padding: 10px;
+            }
+            .logo-top-left img {
                 width: 120px !important;
                 max-width: 30vw !important;
-            }}
-        }}
+            }
+        }
         </style>
         <div class="logo-top-left">
             <img src="data:image/png;base64,{logo_base64}" alt="logo">
@@ -192,6 +197,25 @@ if not st.session_state.get("started"):
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background: transparent;
+            color: transparent;
+            border: none;
+            box-shadow: none;
+            width: 200px;
+            height: 80px;
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            cursor: pointer;
+        }
+        </style>
+    """, unsafe_allow_html=True)
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True

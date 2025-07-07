@@ -11,6 +11,7 @@ from utils import (
     check_title_unlock,
     save_data
 )
+from utils import get_skill_description, get_skill_action
 
 # --- ② 背景適用用の関数定義（関数定義ブロックの外で）---
 def apply_background(file_path):
@@ -33,6 +34,15 @@ def show_skills_page():
     st.set_page_config(page_title="スキル入力", layout="centered")
     initialize_session()
 
+    # ロゴ非表示化
+    st.markdown("""
+        <style>
+        .logo-top-left {
+            display: none !important;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
     # --- 背景画像を適用するパス指定ここ！ ---
     current_dir = os.path.dirname(os.path.abspath(__file__))
     bg_path = os.path.join(current_dir, "..", "gif_assets", "abyss_background2.gif")  # ←ここで画像名を指定
@@ -41,6 +51,19 @@ def show_skills_page():
     st.title("📘 今日の行動入力")
 
     skills = list(SKILL_DICT.keys())
+    with st.form("skill_form"):
+        effort_levels = {}
+        for skill in skills:
+            col1, col2 = st.columns([2, 3])
+            with col1:
+                level = st.slider(f"{skill}", 0, 5, 0, key=f"effort_{skill}")
+                effort_levels[skill] = level
+            with col2:
+                # ⓘマークで表示可能に
+                with st.expander("ⓘ 行動例"):
+                    st.markdown(f"📝 **例：{get_skill_action(skill)}**")
+                    st.caption(get_skill_description(skill))
+
     st.markdown("### 🎯 各スキルの実施度を記録（0〜5）")
 
     with st.form("skill_form"):

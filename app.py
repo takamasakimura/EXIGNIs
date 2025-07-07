@@ -77,17 +77,17 @@ def display_logo(path: str, width: int = 320):
             height: auto;
         }}
 
-        @media (max-width: 768px) {
-            .logo-top-left {
-                top: 0px;  /* スマホ表示時だけ少し下げる */
-                left: 0px;  /* 必要なら横方向も */
+        @media (max-width: 768px) {{
+            .logo-top-left {{
+                top: 0px;
+                left: 0px;
                 padding: 10px;
-            }
-            .logo-top-left img {
+            }}
+            .logo-top-left img {{
                 width: 120px !important;
                 max-width: 30vw !important;
-            }
-        }
+            }}
+        }}
         </style>
         <div class="logo-top-left">
             <img src="data:image/png;base64,{logo_base64}" alt="logo">
@@ -95,7 +95,6 @@ def display_logo(path: str, width: int = 320):
         """,
         unsafe_allow_html=True
     )
-
 # ペルソナ風CSS
 st.markdown("""
     <style>

@@ -38,13 +38,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
-# 背景は常に表示
-apply_background_gif(background_path)
-
-# ロゴは条件付きで表示
-if st.session_state.get("started") and st.session_state.get("page") != "skills":
-    display_logo(logo_path)
-
 # 背景GIF適用
 def apply_background_gif(file_path):
     with open(file_path, "rb") as f:
@@ -102,6 +95,7 @@ def display_logo(path: str, width: int = 320):
         """,
         unsafe_allow_html=True
     )
+
 # ペルソナ風CSS
 st.markdown("""
     <style>
@@ -158,6 +152,16 @@ div.stButton > button:hover {
 }
     </style>
 """, unsafe_allow_html=True)
+
+# --- パス構成と背景・ロゴ表示 ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
+logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
+
+apply_background_gif(background_path)
+# ロゴは条件付きで表示
+if st.session_state.get("started") and st.session_state.get("page") != "skills":
+    display_logo(logo_path)
 
 # 背景とロゴの表示
 apply_background_gif(background_path)

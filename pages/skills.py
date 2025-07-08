@@ -35,11 +35,12 @@ def show_skills_page():
     st.set_page_config(page_title="スキル入力", layout="centered")
     initialize_session()
 
-    # ロゴ非表示化
+    # show_skills_page() 内の最上部に追加
     st.markdown("""
         <style>
         .logo-top-left {
             display: none !important;
+            visibility: hidden !important;
         }
         </style>
     """, unsafe_allow_html=True)

@@ -279,12 +279,17 @@ if not st.session_state.get("started"):
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
+        st.session_state["page"] = "skills"  
         st.rerun()
 
 else:
-    # 起動後で page が skills 以外のときだけロゴを表示
-    if st.session_state.get("page") != "skills":
+    # started = True のとき、ページに応じた画面表示
+    page = st.session_state.get("page", "skills")  # デフォルトで skills
+
+    # skillsページだけロゴ非表示、それ以外は表示
+    if page != "skills":
         display_logo(logo_path)
 
-    # ページ分岐（今回は skills 固定）
-    show_skills_page()
+    # ページ分岐
+    if page == "skills":
+        show_skills_page()

@@ -61,40 +61,43 @@ def display_logo(path: str, width: int = 320):
     logo.save(buffered, format="PNG")
     logo_base64 = base64.b64encode(buffered.getvalue()).decode()
 
-    st.markdown(
-        f"""
-        <style>
-        .logo-top-left {{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 9999;
-            padding: 10px;
-        }}
-        .logo-top-left img {{
-            width: {width}px;
-            max-width: 40vw;
-            height: auto;
-        }}
+    if st.session_state.get("started") and st.session_state.get("page") not in ["skills"]:
+        display_logo(logo_path)
 
-        @media (max-width: 768px) {{
+        st.markdown(
+            f"""
+            <style>
             .logo-top-left {{
+                position: absolute;
                 top: 0px;
                 left: 0px;
+                z-index: 9999;
                 padding: 10px;
             }}
             .logo-top-left img {{
-                width: 120px !important;
-                max-width: 30vw !important;
+                width: {width}px;
+                max-width: 40vw;
+                height: auto;
             }}
-        }}
-        </style>
-        <div class="logo-top-left">
-            <img src="data:image/png;base64,{logo_base64}" alt="logo">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+            @media (max-width: 768px) {{
+                .logo-top-left {{
+                    top: 0px;
+                    left: 0px;
+                    padding: 10px;
+                }}
+                .logo-top-left img {{
+                    width: 120px !important;
+                    max-width: 30vw !important;
+                }}
+            }}
+            </style>
+            <div class="logo-top-left">
+                <img src="data:image/png;base64,{logo_base64}" alt="logo">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 # ペルソナ風CSS
 st.markdown("""

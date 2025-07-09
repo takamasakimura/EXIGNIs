@@ -29,21 +29,23 @@ def apply_background(file_path):
         unsafe_allow_html=True
     )
 
+st.markdown("""
+    <style>
+    .logo-top-left {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+        z-index: -1 !important;
+        pointer-events: none !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 st.session_state["page"] = "skills"
 
 def show_skills_page():
     st.set_page_config(page_title="スキル入力", layout="centered")
     initialize_session()
-
-    # show_skills_page() 内の最上部に追加
-    st.markdown("""
-        <style>
-        .logo-top-left {
-            display: none !important;
-            visibility: hidden !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
     # --- 背景画像を適用するパス指定ここ！ ---
     current_dir = os.path.dirname(os.path.abspath(__file__))

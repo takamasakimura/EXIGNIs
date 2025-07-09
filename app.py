@@ -110,10 +110,6 @@ if not st.session_state.get("started"):
         </style>
     """, unsafe_allow_html=True)
 
-    if st.button("Tap to Start", key="start_button"):
-        st.session_state.started = True
-        st.rerun()
-
 # ペルソナ風CSS
 st.markdown("""
     <style>
@@ -244,6 +240,10 @@ if not st.session_state.get("started"):
         }
         </style>
     """, unsafe_allow_html=True)
+
+    if st.button("Tap to Start", key="start_button"):
+        st.session_state.started = True
+        st.rerun()
 
 else:
     # 起動後で page が skills 以外のときだけロゴを表示

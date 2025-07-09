@@ -29,18 +29,6 @@ def apply_background(file_path):
         unsafe_allow_html=True
     )
 
-st.markdown("""
-    <style>
-    .logo-top-left {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        z-index: -1 !important;
-        pointer-events: none !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
 st.session_state["page"] = "skills"
 
 def show_skills_page():

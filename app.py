@@ -5,8 +5,12 @@ import io
 import os
 
 from utils import initialize_session, load_data
-# ロゴなしのため pages の import は保留
+from pages.skills import show_skills_page
+from pages.status import show_status_page
+from pages.library import show_library_page
+from pages.report import show_report_page
 
+# ページ設定（最上部）
 st.set_page_config(layout="wide")
 
 # サイドバー完全非表示
@@ -29,10 +33,10 @@ st.markdown("""
 initialize_session()
 load_data()
 
-# パス構成（ロゴ関連は削除）
+# パス構成
 current_dir = os.path.dirname(os.path.abspath(__file__))
-tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
+logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
 # 背景GIF適用
 def apply_background_gif(file_path):
@@ -50,13 +54,132 @@ def apply_background_gif(file_path):
         unsafe_allow_html=True
     )
 
-apply_background_gif(background_path)
+# ロゴ表示（左上に固定）
+def display_logo(path: str, width: int = 320):
+    logo = Image.open(path)
+    buffered = io.BytesIO()
+    logo.save(buffered, format="PNG")
+    logo_base64 = base64.b64encode(buffered.getvalue()).decode()
 
-# 起動画面（Tap to Start）
+    st.markdown(
+        f"""
+        <style>
+        .logo-top-left {{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 9999;
+            padding: 10px;
+        }}
+        .logo-top-left img {{
+            width: {width}px;
+            max-width: 40vw;
+            height: auto;
+        }}
+
+        @media (max-width: 768px) {{
+            .logo-top-left {{
+                top: 0px;
+                left: 0px;
+                padding: 10px;
+            }}
+            .logo-top-left img {{
+                width: 120px !important;
+                max-width: 30vw !important;
+            }}
+        }}
+        </style>
+        <div class="logo-top-left">
+            <img src="data:image/png;base64,{logo_base64}" alt="logo">
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# ペルソナ風CSS
+st.markdown("""
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap');
+
+.main, .block-container {
+    background-color: rgba(0, 0, 0, 0) !important;
+    box-shadow: none !important;
+    padding: 2rem 2rem;
+    border-radius: 12px;
+}
+
+header, footer {
+    visibility: hidden;
+}
+
+body {
+    background-color: #0d0d0d;
+    color: white;
+    font-family: 'Jost', 'BIZ UDPGothic', sans-serif;
+}
+
+h1, h2, h3, h4 {
+    color: #ff0033;
+    text-shadow: 2px 2px black;
+    font-weight: bold;
+}
+
+.glow {
+    color: deepskyblue;
+    font-weight: bold;
+    animation: glowPulse 1.5s infinite;
+}
+
+@keyframes glowPulse {
+    0% { text-shadow: 0 0 5px #00ffff; }
+    50% { text-shadow: 0 0 15px #00ffff; }
+    100% { text-shadow: 0 0 5px #00ffff; }
+}
+
+div.stButton > button {
+    background-color: #ff0033;
+    color: white;
+    font-weight: bold;
+    border: none;
+    padding: 0.6em 1.5em;
+    border-radius: 8px;
+    box-shadow: 0 0 5px #ff0033;
+}
+
+div.stButton > button:hover {
+    background-color: #cc0000;
+    box-shadow: 0 0 10px #ff0033;
+}
+    </style>
+""", unsafe_allow_html=True)
+
+# --- パス構成と背景・ロゴ表示 ---
+current_dir = os.path.dirname(os.path.abspath(__file__))
+background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
+logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
+
+apply_background_gif(background_path)
+# ロゴは条件付きで表示
+if st.session_state.get("started") and st.session_state.get("page") != "skills":
+    display_logo(logo_path)
+
+# 背景とロゴの表示
+apply_background_gif(background_path)
+display_logo(logo_path)
+
+# tap_to_start_clean.png 用エンコード
+tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
+with open(tap_path, "rb") as f:
+    tap_encoded = base64.b64encode(f.read()).decode()
+
+# 起動画面（起動前）
 if not st.session_state.get("started"):
+    # ボタン画像の読み込み（表示用）
+    tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
+    # 背景中央にボタン画像＋透明ボタン
     st.markdown(
         f"""
         <style>
@@ -106,9 +229,7 @@ if not st.session_state.get("started"):
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
-        st.session_state["page"] = "skills"
         st.rerun()
 
-# ロゴ削除済み：ここに logo 表示なし
-elif st.session_state.get("started"):
-    st.markdown("### 起動完了（ロゴなし）")
+else:
+    show_skills_page()

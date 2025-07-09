@@ -72,4 +72,4 @@ def show_skills_page():
         st.markdown("---")
         if st.button("💾 データを保存する"):
             save_data()
-            st.success("✅ 成長記録を保存しました")
+            st.success("✅ 成長記録を保存し

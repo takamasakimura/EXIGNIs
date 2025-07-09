@@ -290,6 +290,5 @@ else:
     if page != "skills":
         display_logo(logo_path)
 
-    # ページ分岐
-    if page == "skills":
+    # ページ分岐    if page == "skills":
         show_skills_page()

@@ -36,7 +36,7 @@ def show_skills_page():
     bg_path = os.path.join(current_dir, "..", "gif_assets", "abyss_background2.gif")
     apply_background(bg_path)
 
-    st.title("📘 今日の行動入力")
+    st.title("📘 行動入力")
     skills = list(SKILL_DICT.keys())
 
     with st.form("skill_form"):

@@ -5,13 +5,11 @@ import io
 import os
 
 from utils import initialize_session, load_data
-# from pages.skills import show_skills_page  # 一時コメントアウト
-from pages.status import show_status_page
-from pages.library import show_library_page
-from pages.report import show_report_page
+# ロゴなしのため pages の import は保留
 
 st.set_page_config(layout="wide")
 
+# サイドバー完全非表示
 st.markdown("""
     <style>
     section[data-testid="stSidebar"] {
@@ -27,14 +25,16 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# セッション＆データ
 initialize_session()
 load_data()
 
+# パス構成（ロゴ関連は削除）
 current_dir = os.path.dirname(os.path.abspath(__file__))
 tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
-logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
+# 背景GIF適用
 def apply_background_gif(file_path):
     with open(file_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
@@ -52,6 +52,7 @@ def apply_background_gif(file_path):
 
 apply_background_gif(background_path)
 
+# 起動画面（Tap to Start）
 if not st.session_state.get("started"):
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
@@ -105,15 +106,9 @@ if not st.session_state.get("started"):
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
-        st.session_state["page"] = "status"  # skills から status に変更
+        st.session_state["page"] = "skills"
         st.rerun()
 
-else:
-    page = st.session_state.get("page", "status")
-
-    if page == "status":
-        show_status_page()
-    elif page == "library":
-        show_library_page()
-    elif page == "report":
-        show_report_page()
+# ロゴ削除済み：ここに logo 表示なし
+elif st.session_state.get("started"):
+    st.markdown("### 起動完了（ロゴなし）")

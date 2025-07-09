@@ -54,47 +54,65 @@ def apply_background_gif(file_path):
         unsafe_allow_html=True
     )
 
-# ロゴ表示（左上に固定）
-def display_logo(path: str, width: int = 320):
-    logo = Image.open(path)
-    buffered = io.BytesIO()
-    logo.save(buffered, format="PNG")
-    logo_base64 = base64.b64encode(buffered.getvalue()).decode()
+# 背景GIFを一度だけ適用（重複削除）
+apply_background_gif(background_path)
 
+# 起動画面（Tap to Start）
+if not st.session_state.get("started"):
+    with open(tap_path, "rb") as f:
+        tap_encoded = base64.b64encode(f.read()).decode()
+
+    # ロゴも表示しない（ここでは）
     st.markdown(
         f"""
         <style>
-        .logo-top-left {{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 9999;
-            padding: 10px;
+        .center-image {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100vh;
         }}
-        .logo-top-left img {{
-            width: {width}px;
-            max-width: 40vw;
-            height: auto;
+        .center-image img {{
+            width: 200px;
+            max-width: 80vw;
+            animation: blink 1.5s infinite;
         }}
-
-        @media (max-width: 768px) {{
-            .logo-top-left {{
-                top: 0px;
-                left: 0px;
-                padding: 10px;
-            }}
-            .logo-top-left img {{
-                width: 120px !important;
-                max-width: 30vw !important;
-            }}
+        @keyframes blink {{
+            0% {{ opacity: 1; }}
+            50% {{ opacity: 0.4; }}
+            100% {{ opacity: 1; }}
         }}
         </style>
-        <div class="logo-top-left">
-            <img src="data:image/png;base64,{logo_base64}" alt="logo">
+        <div class="center-image">
+            <img src="data:image/png;base64,{tap_encoded}" />
         </div>
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background: transparent;
+            color: transparent;
+            border: none;
+            box-shadow: none;
+            width: 200px;
+            height: 80px;
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            cursor: pointer;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    if st.button("Tap to Start", key="start_button"):
+        st.session_state.started = True
+        st.rerun()
 
 # ペルソナ風CSS
 st.markdown("""
@@ -227,12 +245,10 @@ if not st.session_state.get("started"):
         </style>
     """, unsafe_allow_html=True)
 
-    if st.button("Tap to Start", key="start_button"):
-        st.session_state.started = True
-        st.rerun()
-
 else:
+    # 起動後で page が skills 以外のときだけロゴを表示
     if st.session_state.get("page") != "skills":
         display_logo(logo_path)
 
-    show_skills_page() 
+    # ページ分岐（今回は skills 固定）
+    show_skills_page()

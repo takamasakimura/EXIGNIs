@@ -35,6 +35,7 @@ load_data()
 
 # パス構成
 current_dir = os.path.dirname(os.path.abspath(__file__))
+tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
@@ -172,24 +173,18 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
-apply_background_gif(background_path)
 # ロゴは条件付きで表示
 if st.session_state.get("started") and st.session_state.get("page") != "skills":
+    apply_background_gif(background_path)
     display_logo(logo_path)
 
-# 背景とロゴの表示
-apply_background_gif(background_path)
-display_logo(logo_path)
-
 # tap_to_start_clean.png 用エンコード
-tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 with open(tap_path, "rb") as f:
     tap_encoded = base64.b64encode(f.read()).decode()
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
     # ボタン画像の読み込み（表示用）
-    tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 

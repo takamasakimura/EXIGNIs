@@ -5,15 +5,13 @@ import io
 import os
 
 from utils import initialize_session, load_data
-from pages.skills import show_skills_page
+# from pages.skills import show_skills_page  # 一時コメントアウト
 from pages.status import show_status_page
 from pages.library import show_library_page
 from pages.report import show_report_page
 
-# ページ設定（最上部）
 st.set_page_config(layout="wide")
 
-# サイドバー完全非表示
 st.markdown("""
     <style>
     section[data-testid="stSidebar"] {
@@ -29,17 +27,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# セッション＆データ
 initialize_session()
 load_data()
 
-# パス構成
 current_dir = os.path.dirname(os.path.abspath(__file__))
 tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
-# 背景GIF適用
 def apply_background_gif(file_path):
     with open(file_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
@@ -55,15 +50,12 @@ def apply_background_gif(file_path):
         unsafe_allow_html=True
     )
 
-# 背景GIFを一度だけ適用（重複削除）
 apply_background_gif(background_path)
 
-# 起動画面（Tap to Start）
 if not st.session_state.get("started"):
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
-    # ロゴも表示しない（ここでは）
     st.markdown(
         f"""
         <style>
@@ -111,44 +103,17 @@ if not st.session_state.get("started"):
         </style>
     """, unsafe_allow_html=True)
 
-def display_logo(path: str, width: int = 320):
-    logo = Image.open(path)
-    buffered = io.BytesIO()
-    logo.save(buffered, format="PNG")
-    logo_base64 = base64.b64encode(buffered.getvalue()).decode()
+    if st.button("Tap to Start", key="start_button"):
+        st.session_state.started = True
+        st.session_state["page"] = "status"  # skills から status に変更
+        st.rerun()
 
-    st.markdown(
-        f"""
-        <style>
-        .logo-top-left {{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            z-index: 9999;
-            padding: 10px;
-        }}
-        .logo-top-left img {{
-            width: {width}px;
-            max-width: 40vw;
-            height: auto;
-        }}
+else:
+    page = st.session_state.get("page", "status")
 
-        @media (max-width: 768px) {{
-            .logo-top-left {{
-                top: 0px;
-                left: 0px;
-                padding: 10px;
-            }}
-            .logo-top-left img {{
-                width: 120px !important;
-                max-width: 30vw !important;
-            }}
-        }}
-        </style>
-        <div class="logo-top-left">
-            <img src="data:image/png;base64,{logo_base64}" alt="logo">
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+    if page == "status":
+        show_status_page()
+    elif page == "library":
+        show_library_page()
+    elif page == "report":
+        show_report_page()

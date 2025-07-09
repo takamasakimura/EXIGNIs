@@ -50,7 +50,7 @@ def show_skills_page():
                 with st.expander("ⓘ 行動例"):
                     st.markdown(f"📝 **例：{get_skill_action(skill)}**")
                     st.caption(get_skill_description(skill))
-
+    
         submitted = st.form_submit_button("記録して経験値に反映")
 
     if submitted:

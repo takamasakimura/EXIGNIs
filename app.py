@@ -35,6 +35,7 @@ load_data()
 
 # パス構成
 current_dir = os.path.dirname(os.path.abspath(__file__))
+tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
@@ -54,7 +55,62 @@ def apply_background_gif(file_path):
         unsafe_allow_html=True
     )
 
-# ロゴ表示（左上に固定）
+# 背景GIFを一度だけ適用（重複削除）
+apply_background_gif(background_path)
+
+# 起動画面（Tap to Start）
+if not st.session_state.get("started"):
+    with open(tap_path, "rb") as f:
+        tap_encoded = base64.b64encode(f.read()).decode()
+
+    # ロゴも表示しない（ここでは）
+    st.markdown(
+        f"""
+        <style>
+        .center-image {{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100vh;
+        }}
+        .center-image img {{
+            width: 200px;
+            max-width: 80vw;
+            animation: blink 1.5s infinite;
+        }}
+        @keyframes blink {{
+            0% {{ opacity: 1; }}
+            50% {{ opacity: 0.4; }}
+            100% {{ opacity: 1; }}
+        }}
+        </style>
+        <div class="center-image">
+            <img src="data:image/png;base64,{tap_encoded}" />
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background: transparent;
+            color: transparent;
+            border: none;
+            box-shadow: none;
+            width: 200px;
+            height: 80px;
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10000;
+            cursor: pointer;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
 def display_logo(path: str, width: int = 320):
     logo = Image.open(path)
     buffered = io.BytesIO()
@@ -158,24 +214,18 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif")
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
-apply_background_gif(background_path)
 # ロゴは条件付きで表示
 if st.session_state.get("started") and st.session_state.get("page") != "skills":
+    apply_background_gif(background_path)
     display_logo(logo_path)
 
-# 背景とロゴの表示
-apply_background_gif(background_path)
-display_logo(logo_path)
-
 # tap_to_start_clean.png 用エンコード
-tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
 with open(tap_path, "rb") as f:
     tap_encoded = base64.b64encode(f.read()).decode()
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
     # ボタン画像の読み込み（表示用）
-    tap_path = os.path.join(current_dir, "images", "tap_to_start_clean.png")
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
@@ -229,7 +279,16 @@ if not st.session_state.get("started"):
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
+        st.session_state["page"] = "skills"  
         st.rerun()
 
 else:
-    show_skills_page()
+    # started = True のとき、ページに応じた画面表示
+    page = st.session_state.get("page", "skills")  # デフォルトで skills
+
+    # skillsページだけロゴ非表示、それ以外は表示
+    if page != "skills":
+        display_logo(logo_path)
+
+    # ページ分岐    if page == "skills":
+        show_skills_page()

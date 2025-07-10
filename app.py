@@ -215,9 +215,6 @@ background_path = os.path.join(current_dir, "gif_assets", "abyss_background.gif"
 logo_path = os.path.join(current_dir, "images", "abysslog_logo_transparent.png")
 
 # ロゴは条件付きで表示
-if st.session_state.get("started") and st.session_state.get("page") != "skills":
-    apply_background_gif(background_path)
-    display_logo(logo_path)
 
 # tap_to_start_clean.png 用エンコード
 with open(tap_path, "rb") as f:
@@ -290,6 +287,21 @@ else:
         display_logo(logo_path)
 
     # ページ切り替え
+    if page == "skills":
+        show_skills_page()
+    elif page == "status":
+        show_status_page()
+    elif page == "library":
+        show_library_page()
+    elif page == "report":
+        show_report_page()
+    page = st.session_state.get("page", "skills")
+
+    if page != "skills":
+        display_logo(logo_path)
+
+    apply_background_gif(background_path)
+
     if page == "skills":
         show_skills_page()
     elif page == "status":

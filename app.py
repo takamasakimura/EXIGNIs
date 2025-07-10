@@ -225,11 +225,10 @@ with open(tap_path, "rb") as f:
 
 # 起動画面（起動前）
 if not st.session_state.get("started"):
-    # ボタン画像の読み込み（表示用）
+    # 初回起動画面（Tap to Start）
     with open(tap_path, "rb") as f:
         tap_encoded = base64.b64encode(f.read()).decode()
 
-    # 背景中央にボタン画像＋透明ボタン
     st.markdown(
         f"""
         <style>
@@ -279,16 +278,23 @@ if not st.session_state.get("started"):
 
     if st.button("Tap to Start", key="start_button"):
         st.session_state.started = True
-        st.session_state["page"] = "skills"  
+        st.session_state["page"] = "skills"
         st.rerun()
 
 else:
-    # started = True のとき、ページに応じた画面表示
-    page = st.session_state.get("page", "skills")  # デフォルトで skills
+    # 通常のページ表示
+    page = st.session_state.get("page", "skills")
 
-    # skillsページだけロゴ非表示、それ以外は表示
+    # ロゴ表示（skills以外のとき）
     if page != "skills":
         display_logo(logo_path)
 
-    # ページ分岐    if page == "skills":
+    # ページ切り替え
+    if page == "skills":
         show_skills_page()
+    elif page == "status":
+        show_status_page()
+    elif page == "library":
+        show_library_page()
+    elif page == "report":
+        show_report_page()
